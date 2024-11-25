@@ -15,6 +15,8 @@ phases:
     commands:
       - echo Building the project...
       - dotnet build --configuration Release
+      - echo Publishing the project...
+      - dotnet publish --configuration Release --output ./saeedawsapps/web
   post_build:
     commands:
       - echo Running tests...
@@ -22,6 +24,6 @@ phases:
       - echo Build and test completed on `date`
 artifacts:
   files:
-    - saeedawsapps/web/**/*  # Include everything under saeedawsapps/web folder
-    - appspec.yml  
- 
+    - saeedawsapps/web/**/*  # All files under the web folder
+    - appspec.yml            # Include the appspec.yml file
+  discard-paths: no          # Retain directory structure
