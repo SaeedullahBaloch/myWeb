@@ -2,20 +2,32 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      dotnet: 6.0 # Specify your .NET runtime version
     commands:
-      - sudo apt-get update
-      - sudo apt-get install -y nginx
+      - echo "Installing dependencies..."
+      - apt-get update -y
+      - apt-get install -y nginx
+
+  pre_build:
+    commands:
+      - echo "Restoring dependencies..."
+      - dotnet restore
 
   build:
     commands:
-      - echo "Build started on: $(date)"
-      - sudo cp Index.cshtml /Views/Home/
+      - echo "Building the project..."
+      - dotnet build --configuration Release
 
   post_build:
     commands:
+      - echo "Publishing the project..."
+      - dotnet publish -c Release -o ./publish
+      - echo "Deploying to NGINX..."
+      - cp -r ./publish/* /var/www/html/
       - sudo systemctl restart nginx
-      - echo "NGINX is running with the copied Index.cshtml"
+      - echo "Application deployed successfully!"
 
 artifacts:
   files:
-    - Views/Home/Index.cshtml
+    - /var/www/html/*
