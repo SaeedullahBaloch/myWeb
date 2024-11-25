@@ -3,26 +3,22 @@ version: 0.2
 phases:
   install:
     commands:
-      # Install .NET SDK (if not already installed in the environment)
       - echo Installing .NET SDK
       - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel LTS
       - export PATH=$PATH:$HOME/.dotnet
-      
+
   pre_build:
     commands:
-      # Restore NuGet packages
       - echo Restoring NuGet packages
-      - dotnet restore
+      - dotnet restore --verbosity detailed  # Increased verbosity
 
   build:
     commands:
-      # Build the application
       - echo Building the application
       - dotnet build --configuration Release
 
   post_build:
     commands:
-      # Run tests or deploy the application
       - echo Running tests
       - dotnet test
 
