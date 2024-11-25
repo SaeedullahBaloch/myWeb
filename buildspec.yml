@@ -2,31 +2,27 @@ version: 0.2
 
 phases:
   install:
-    commands:
-      # Install .NET 8 SDK
-      - echo "Installing .NET 8 SDK"
-      - curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
-      - export PATH=$PATH:/root/.dotnet
+    runtime-versions:
+      dotnet: 8.0
+      nodejs: 14
 
   pre_build:
     commands:
-      # Restore .NET packages with detailed verbosity
-      - echo "Running dotnet restore"
-      - dotnet restore MyFirstWebHost.csproj --verbosity detailed > restore.log 2>&1 || (cat restore.log && exit 1)
-
+      - echo pre-build started on `date`
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      
   build:
     commands:
-      # Build the project
-      - echo "Building the project"
-      - dotnet build MyFirstWebHost.csproj --configuration Release
-
+      - echo Building dotnet API...
+      - cd aspnet-core/src/SITR.Web.Host
+      - echo Executing dotnet restore...
+      - dotnet restore
+      - echo Executing dotnet publish...
+      - dotnet publish -c release -o ../../../docker/build/outputs/Host
+  
   post_build:
     commands:
-      # Publish the project
-      - echo "Publishing the project"
-      - dotnet publish MyFirstWebHost.csproj --configuration Release --output /output
-
-artifacts:
-  files:
-    - /output/**
-    - restore.log
+      - echo Pushing the Docker image...
+      - docker-compose --file=docker-compose-qa.yml push
+      - echo Build completed on `date`
