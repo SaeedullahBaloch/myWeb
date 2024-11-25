@@ -22,5 +22,6 @@ phases:
       - echo Build and test completed on `date`
 artifacts:
   files:
-    - /var/www/html/index.cshtml
+    - saeedawsapps/web/**/*  # Include everything under saeedawsapps/web folder
+    - appspec.yml  # Include appspec.yml file for CodeDeploy if needed
  
