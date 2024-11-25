@@ -3,18 +3,18 @@ version: 0.2
 phases:
   install:
     commands:
-      - sudo apt-get update          # Install NGINX: Update packages
-      - sudo apt-get install -y nginx # Install NGINX
+      - sudo apt-get update         # Update package lists
+      - sudo apt-get install -y nginx  # Install NGINX
 
   build:
     commands:
-      - echo "Build started on: $(date)" # Echo the build start date
-      - sudo cp Index.cshtml /Views/Home/ # Copy Index.cshtml to NGINX's web directory
+      - echo "Build started on: $(date)"  # Log the build start date
+      - sudo cp Index.cshtml /Views/Home/  # Copy Index.cshtml to the desired directory
 
   post_build:
     commands:
-      - sudo systemctl restart nginx # Restart NGINX to reflect changes
-      - echo "NGINX is running with the copied index.html"
+      - sudo systemctl restart nginx  # Restart NGINX to apply changes
+      - echo "NGINX is running with the copied Index.cshtml"
 
 artifacts:
   files:
