@@ -24,4 +24,4 @@ artifacts:
   files:
     - '**/*'
   discard-paths: yes
-  base-directory: bin/Release/net8.0/publish
+  base-directory: publish
