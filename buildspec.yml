@@ -3,28 +3,26 @@ version: 0.2
 phases:
   install:
     commands:
+      # Install .NET 8 SDK
       - echo "Installing .NET 8 SDK"
-      - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
+      - curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
       - export PATH=$PATH:/root/.dotnet
-      - dotnet --version  # Verify the installed .NET version
-      - dotnet --list-sdks  # List installed SDKs for confirmation
 
   pre_build:
     commands:
-      - echo "Checking environment and restoring dependencies"
-      - echo "PATH: $PATH"  # Verify that .NET is in the PATH
-      - dotnet --version  # Verify again to ensure .NET is available
-      - dotnet --list-sdks  # Verify the SDK list
+      # Restore .NET packages with detailed verbosity
       - echo "Running dotnet restore"
       - dotnet restore MyFirstWebHost.csproj --verbosity detailed > restore.log 2>&1 || (cat restore.log && exit 1)
 
   build:
     commands:
+      # Build the project
       - echo "Building the project"
-      - dotnet build MyFirstWebHost.csproj --configuration Release --no-restore
+      - dotnet build MyFirstWebHost.csproj --configuration Release
 
   post_build:
     commands:
+      # Publish the project
       - echo "Publishing the project"
       - dotnet publish MyFirstWebHost.csproj --configuration Release --output /output
 
