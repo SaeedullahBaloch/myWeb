@@ -23,5 +23,5 @@ phases:
 artifacts:
   files:
     - saeedawsapps/web/**/*  # Include everything under saeedawsapps/web folder
-    - appspec.yml  # Include appspec.yml file for CodeDeploy if needed
+    - appspec.yml  
  
