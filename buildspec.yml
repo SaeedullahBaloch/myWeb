@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      # Install NGINX
+      - sudo apt-get update
+      - sudo apt-get install -y nginx
+
+  build:
+    commands:
+      # Echo the build start date
+      - echo "Build started on: $(date)"
+      # Copy the existing index.html to NGINX's web directory
+      - sudo cp Index.cshtml /Views/Home/
+
+  post_build:
+    commands:
+      # Restart NGINX to reflect the changes
+      - sudo systemctl restart nginx
+      - echo "NGINX is running with the copied index.html"
+
+artifacts:
+  files:
+    - /Views/Home/Index.cshtml
