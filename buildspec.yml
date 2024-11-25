@@ -2,35 +2,30 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      dotnet: 6.0
     commands:
-      - echo "Installing dependencies..."
-      - apt-get update
-      - apt-get install -y nginx
-
+      # Install .NET SDK (if not already installed in the environment)
+      - echo Installing .NET SDK
+      - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel LTS
+      - export PATH=$PATH:$HOME/.dotnet
+      
   pre_build:
     commands:
-      - echo "Restoring dependencies..."
+      # Restore NuGet packages
+      - echo Restoring NuGet packages
       - dotnet restore
 
   build:
     commands:
-      - echo "Building the project..."
+      # Build the application
+      - echo Building the application
       - dotnet build --configuration Release
 
   post_build:
     commands:
-      - echo "Publishing the project..."
-      - dotnet publish -c Release -o ./publish
-      - echo "Copying published files to NGINX directory..."
-      - sudo cp -r ./publish/* /var/www/html/
-      - echo "Testing NGINX configuration..."
-      - sudo nginx -t || { echo "NGINX configuration failed!"; exit 1; }
-      - echo "Restarting NGINX..."
-      - sudo systemctl restart nginx || { echo "Failed to restart NGINX. Check logs!"; sudo cat /var/log/nginx/error.log; exit 1; }
-      - echo "Deployment complete!"
+      # Run tests or deploy the application
+      - echo Running tests
+      - dotnet test
 
 artifacts:
   files:
-    - /var/www/html/*
+    - '**/*'
