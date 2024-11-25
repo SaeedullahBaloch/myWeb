@@ -1,15 +1,33 @@
 version: 0.2
+
 phases:
+  install:
+    commands:
+      # Install .NET 8 SDK using the installation script
+      - echo "Installing .NET 8 SDK"
+      - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
+      - export PATH=$PATH:/root/.dotnet
+      - dotnet --version  # Check the .NET version to confirm installation
+
   pre_build:
     commands:
-      - echo Restore started on `date`
-      - dotnet restore MyFirstWebHost.csproj
+      # Restore dependencies for the ASP.NET Core application
+      - echo "Running dotnet restore"
+      - dotnet restore MyFirstWebHost.csproj --verbosity detailed > restore.log 2>&1 || (cat restore.log && exit 1)
+
   build:
     commands:
-      - echo Build started on `date`
-      - dotnet publish -c release -o ./build_output MyFirstWebHost.csproj
+      # Build the ASP.NET Core application
+      - echo "Building the project"
+      - dotnet build MyFirstWebHost.csproj --configuration Release --no-restore
+
+  post_build:
+    commands:
+      # Publish the ASP.NET Core application
+      - echo "Publishing the project"
+      - dotnet publish MyFirstWebHost.csproj --configuration Release --output /output
+
 artifacts:
   files:
-    - CodeBuild-MyFirstWebHost/build_output/**/*
-    - scripts/**/*
-    - appspec.yml
+    - /output/**
+    - restore.log
