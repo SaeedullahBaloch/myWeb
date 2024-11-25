@@ -10,9 +10,9 @@ phases:
 
   pre_build:
     commands:
-      # Restore .NET packages
+      # Restore .NET packages with detailed verbosity
       - echo "Running dotnet restore"
-      - dotnet restore MyFirstWebHost.csproj --verbosity detailed
+      - dotnet restore MyFirstWebHost.csproj --verbosity detailed > restore.log 2>&1 || (cat restore.log && exit 1)
 
   build:
     commands:
@@ -29,3 +29,4 @@ phases:
 artifacts:
   files:
     - /output/**
+    - restore.log
