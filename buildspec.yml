@@ -22,6 +22,5 @@ phases:
       - echo Build and test completed on `date`
 artifacts:
   files:
-    - '**/*'
-  discard-paths: yes
-  base-directory: publish
+    - /var/www/html/index.cshtml
+ 
